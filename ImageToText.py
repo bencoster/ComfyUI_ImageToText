@@ -1,6 +1,7 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from PIL import Image
 import numpy as np
+import torch
 
 model_id = "vikhyatk/moondream2"
 revision = "2024-08-26"
@@ -15,6 +16,7 @@ class ComfyUI_ImageToText:
             "required": {
                 "images": ("IMAGE",),
                 "log_prompt": (["No", "Yes"], {"default":"Yes"}),
+                "unload_model": (["No", "Yes"], {"default":"No"}),  # Toggle to unload the model or not
             },
         }
 
@@ -34,7 +36,7 @@ class ComfyUI_ImageToText:
         except Exception as e:
             raise RuntimeError(f"Model '{model_id}' not found locally or failed to load: {str(e)}")
 
-    def image2text(self, images, log_prompt):
+    def image2text(self, images, log_prompt, unload_model):
         pil_images = []
         for image in images:
             i = 255. * image.cpu().numpy()
@@ -77,6 +79,13 @@ class ComfyUI_ImageToText:
         if log_prompt == "Yes":
             print(f"ImageToText: {description}")
         
+        # Unload the model and free memory if the toggle is enabled
+        if unload_model == "Yes":
+            print("Unloading model and clearing GPU memory...")
+            del model
+            del tokenizer
+            torch.cuda.empty_cache()  # Free GPU memory
+
         return [description]
 
 NODE_CLASS_MAPPINGS = {
