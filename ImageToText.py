@@ -1,8 +1,8 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from PIL import Image
-
 import numpy as np
 
+# Define the model ID and revision
 model_id = "vikhyatk/moondream2"
 revision = "2024-04-02"
 
@@ -15,7 +15,7 @@ class ComfyUI_ImageToText:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "log_prompt": (["No", "Yes"], {"default":"Yes"}),
+                "log_prompt": (["No", "Yes"], {"default": "Yes"}),
             },
         }
 
@@ -32,16 +32,29 @@ class ComfyUI_ImageToText:
             img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
             pil_images.append(img)
         image = pil_images[0]
-        model = AutoModelForCausalLM.from_pretrained(
-            model_id, trust_remote_code=True, revision=revision
-        )
-        tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
-        enc_image = model.encode_image(image)
-        en = model.answer_question(enc_image, "Describe this image.", tokenizer)
+        
+        # Load the model and tokenizer from Hugging Face
+        try:
+            model = AutoModelForCausalLM.from_pretrained(
+                model_id, trust_remote_code=True, revision=revision
+            )
+            tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
+        except Exception as e:
+            raise RuntimeError(f"Failed to load model '{model_id}': {str(e)}")
+        
+        # Assuming the model supports image encoding and text generation
+        try:
+            enc_image = model.encode_image(image)  # Hypothetical function
+            en = model.answer_question(enc_image, "Describe this image.", tokenizer)
+        except AttributeError:
+            raise AttributeError(f"Model '{model_id}' does not have 'encode_image' or 'answer_question' methods.")
+        
         if log_prompt == "Yes":
             print(f"ImageToText: {en}")
+        
         return [en]
 
+# Node mappings
 NODE_CLASS_MAPPINGS = {
     "ComfyUI_ImageToText": ComfyUI_ImageToText
 }
@@ -49,3 +62,4 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "ComfyUI_ImageToText": "ComfyUI_ImageToText"
 }
+
