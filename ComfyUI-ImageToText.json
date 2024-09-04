@@ -40,48 +40,9 @@
         "Node name for S&R": "ComfyUI_ImageToText"
       },
       "widgets_values": [
-        "Yes"
-      ]
-    },
-    {
-      "id": 2,
-      "type": "LoadImage",
-      "pos": [
-        282,
-        113
-      ],
-      "size": {
-        "0": 315,
-        "1": 314
-      },
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            1
-          ],
-          "shape": 3,
-          "label": "Image",
-          "slot_index": 0
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null,
-          "shape": 3,
-          "label": "Mask"
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "00489-MexxL_LCM2_YY-1034089384-1-960-20240111205721.jpg",
-        "image"
+        "Yes",  
+        "",    
+        ""     
       ]
     },
     {

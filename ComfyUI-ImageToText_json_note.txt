@@ -1,0 +1,8 @@
+ComfyUI-ImageToText
+This is a place for Json notes 
+
+"widgets_values": [
+        "Yes",   // for log_prompt option
+        "",      // text box for generated text (empty by default)
+        ""       // image preview box (empty by default, filled with base64 image later)
+      ]
