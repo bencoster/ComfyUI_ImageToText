@@ -1,15 +1,13 @@
 import os
-
 from PIL import Image
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# 这个地方放图片文件夹的路径
+# Path to the folder containing images
 base = './image/'
 
-# 这里是模型地址，如果切换模型，可以改动这里
+# Model ID, if switching models, modify this part
 model_id = "vikhyatk/moondream2"
 revision = "2024-04-02"
-
 
 def findAllFile(base):
     for root, ds, fs in os.walk(base):
@@ -18,22 +16,24 @@ def findAllFile(base):
                 fullname = os.path.join(root, f)
                 yield fullname
 
-
 def main():
-    print(f"加载模型: {model_id}")
+    print(f"Loading model: {model_id}")
     model = AutoModelForCausalLM.from_pretrained(
         model_id, trust_remote_code=True, revision=revision
     )
     tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
+    
     for imagefile in findAllFile(base):
-        print(f"处理图片: {imagefile}")
+        print(f"Processing image: {imagefile}")
         image = Image.open(imagefile)
         enc_image = model.encode_image(image)
         en = model.answer_question(enc_image, "Describe this image.", tokenizer)
+        
         file_name, file_extension = os.path.splitext(imagefile)
-        print(f"{file_name} 自然语言Tag: {en}")
+        print(f"{file_name} natural language tag: {en}")
+        
         with open(file_name + ".txt", 'w', encoding='utf-8') as file:
-            # 向文件中写入内容
+            # Write the description to a file
             file.write(en)
             file.write('\n')
 
