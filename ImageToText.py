@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 
 model_id = "vikhyatk/moondream2"
-revision = "2024-04-02"
+revision = "2024-08-26"
 
 class ComfyUI_ImageToText:
     def __init__(self):
@@ -51,6 +51,11 @@ class ComfyUI_ImageToText:
         # Check if the model is available and load it
         model, tokenizer = self.check_model_availability(model_id, revision)
 
+        # Set the pad token if it does not exist
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+            print("Assigned pad_token to eos_token.")
+
         # Encode the image using the model
         try:
             enc_image = model.encode_image(image)
@@ -62,19 +67,17 @@ class ComfyUI_ImageToText:
 
         # Generate text description from the image
         try:
-            inputs = tokenizer.encode_plus("Describe this image.", return_tensors="pt", padding=True)
-            en = model.answer_question(enc_image, "Describe this image.", tokenizer, inputs['attention_mask'])
+            description = model.answer_question(enc_image, "Describe this image.", tokenizer)
         except AttributeError as e:
             raise AttributeError(f"Model '{model_id}' does not have 'answer_question' method: {str(e)}")
         except IndexError as e:
             print(f"Error: {str(e)}. This may be due to invalid position embeddings or input size.")
-            print(f"Debugging position_ids or related tensor dimensions before the error.")
             raise
 
         if log_prompt == "Yes":
-            print(f"ImageToText: {en}")
+            print(f"ImageToText: {description}")
         
-        return [en]
+        return [description]
 
 NODE_CLASS_MAPPINGS = {
     "ComfyUI_ImageToText": ComfyUI_ImageToText
