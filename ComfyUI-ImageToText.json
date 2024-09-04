@@ -65,7 +65,7 @@
             1
           ],
           "shape": 3,
-          "label": "图像",
+          "label": "Image",
           "slot_index": 0
         },
         {
@@ -73,7 +73,7 @@
           "type": "MASK",
           "links": null,
           "shape": 3,
-          "label": "遮罩"
+          "label": "Mask"
         }
       ],
       "properties": {
@@ -106,7 +106,7 @@
           "widget": {
             "name": "text"
           },
-          "label": "文本"
+          "label": "Text"
         }
       ],
       "outputs": [
@@ -115,7 +115,7 @@
           "type": "STRING",
           "links": null,
           "shape": 6,
-          "label": "字符串"
+          "label": "String"
         }
       ],
       "properties": {
